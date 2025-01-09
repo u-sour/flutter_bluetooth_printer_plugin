@@ -6,7 +6,7 @@ class BluetoothPeripheralDelegate: NSObject, CBPeripheralDelegate {
     private var services: Set<String>!
     private var characteristics: Set<CBUUID>?
 
-    private let writablecharacteristicUUID = "2AF1"
+    private let writablecharacteristicUUID = ["FF12","FF02","2AF1"]
 
     var wellDoneCanWriteData: ((CBPeripheral) -> ())?
     var didWriteData: ((CBPeripheral, Error?) -> ())?
@@ -55,7 +55,8 @@ class BluetoothPeripheralDelegate: NSObject, CBPeripheralDelegate {
     
     public func peripheral(_ peripheral: CBPeripheral, didDiscoverCharacteristicsFor service: CBService, error: Error?) {
         writablePeripheral = peripheral
-        let wc = service.characteristics?.filter { $0.uuid.uuidString == writablecharacteristicUUID }.last
+        // let wc = service.characteristics?.filter { $0.uuid.uuidString == writablecharacteristicUUID }.last
+        let wc = service.characteristics?.filter { writablecharacteristicUUID.contains($0.uuid.uuidString) }.last
         if wc?.properties.contains(.writeWithoutResponse) ?? false || wc?.properties.contains(.write) ?? false{
             writablecharacteristic = wc
         }
